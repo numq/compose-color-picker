@@ -33,10 +33,16 @@ fun main() = singleWindowApplication(title = "Color Picker") {
             horizontalArrangement = Arrangement.spacedBy(space = 8.dp, alignment = Alignment.CenterHorizontally),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            CircularColorPicker(modifier = Modifier.weight(1f)) { color ->
+            SimpleCircularColorPicker(modifier = Modifier.weight(1f)) { color ->
                 backgroundColor = color
             }
-            SquareColorPicker(modifier = Modifier.weight(1f)) { color ->
+            WheelColorPicker(modifier = Modifier.weight(1f)) { color ->
+                backgroundColor = color
+            }
+            SimpleSquareColorPicker(modifier = Modifier.weight(1f)) { color ->
+                backgroundColor = color
+            }
+            SliderColorPicker(modifier = Modifier.weight(1f)) { color ->
                 backgroundColor = color
             }
         }
