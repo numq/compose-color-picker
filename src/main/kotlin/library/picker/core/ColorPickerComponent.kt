@@ -9,9 +9,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.DrawScope
-import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.input.pointer.PointerInputScope
 import androidx.compose.ui.input.pointer.pointerInput
 import library.offset.OffsetPercentage
@@ -19,25 +17,10 @@ import library.offset.OffsetPercentage
 @Composable
 fun ColorPickerComponent(
     modifier: Modifier,
-    indicatorThickness: Float,
-    indicatorRadius: Float,
     mapIndicatorOffset: (PointerInputScope.(Offset) -> Offset?)? = null,
     indicatorOffsetPercentage: OffsetPercentage,
     onIndicatorOffsetPercentage: (indicatorOffsetPercentage: OffsetPercentage) -> Unit,
-    indicatorContent: DrawScope.(indicatorOffset: Offset) -> Unit = { indicatorOffset ->
-        drawCircle(
-            color = Color.Black,
-            radius = indicatorRadius / 2f,
-            center = indicatorOffset,
-            style = Stroke(width = indicatorThickness)
-        )
-        drawCircle(
-            color = Color.White,
-            radius = indicatorRadius,
-            center = indicatorOffset,
-            style = Stroke(width = indicatorThickness)
-        )
-    },
+    indicatorContent: DrawScope.(indicatorOffset: Offset) -> Unit,
     content: DrawScope.() -> Unit,
 ) {
     val updatedMapIndicatorOffset by rememberUpdatedState(mapIndicatorOffset)

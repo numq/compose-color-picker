@@ -15,7 +15,12 @@ import library.color.saturation
 import library.color.value
 
 @Composable
-fun HSVControls(modifier: Modifier, color: Color, onColorChange: (Color) -> Unit) {
+fun HSVControls(
+    modifier: Modifier,
+    tint: Color,
+    color: Color,
+    onColorChange: (Color) -> Unit,
+) {
     val updatedOnColorChange by rememberUpdatedState(onColorChange)
 
     val colorHue by remember(color) {
@@ -49,6 +54,7 @@ fun HSVControls(modifier: Modifier, color: Color, onColorChange: (Color) -> Unit
         ) {
             LabeledSlider(
                 modifier = Modifier.weight(1f),
+                tint = tint,
                 label = "Hue",
                 value = colorHue,
                 valueRange = 0f..360f,
@@ -64,6 +70,7 @@ fun HSVControls(modifier: Modifier, color: Color, onColorChange: (Color) -> Unit
             )
             LabeledSlider(
                 modifier = Modifier.weight(1f),
+                tint = tint,
                 label = "Saturation",
                 value = colorSaturation,
                 onValueChange = { saturation ->
@@ -78,6 +85,7 @@ fun HSVControls(modifier: Modifier, color: Color, onColorChange: (Color) -> Unit
             )
             LabeledSlider(
                 modifier = Modifier.weight(1f),
+                tint = tint,
                 label = "Value",
                 value = colorValue,
                 onValueChange = { value ->

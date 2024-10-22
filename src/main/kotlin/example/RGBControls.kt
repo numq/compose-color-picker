@@ -14,7 +14,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun RGBControls(modifier: Modifier, color: Color, onColorChange: (Color) -> Unit) {
+fun RGBControls(
+    modifier: Modifier,
+    tint: Color,
+    color: Color,
+    onColorChange: (Color) -> Unit,
+) {
     val updatedOnColorChange by rememberUpdatedState(onColorChange)
 
     Column(
@@ -22,13 +27,14 @@ fun RGBControls(modifier: Modifier, color: Color, onColorChange: (Color) -> Unit
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        Text("RGB")
+        Text(text = "RGB", color = tint)
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(space = 8.dp, alignment = Alignment.CenterHorizontally),
             verticalAlignment = Alignment.CenterVertically
         ) {
             LabeledSlider(modifier = Modifier.weight(1f),
+                tint = tint,
                 label = "Red",
                 value = color.red,
                 onValueChange = { red ->
@@ -36,6 +42,7 @@ fun RGBControls(modifier: Modifier, color: Color, onColorChange: (Color) -> Unit
                 }
             )
             LabeledSlider(modifier = Modifier.weight(1f),
+                tint = tint,
                 label = "Green",
                 value = color.green,
                 onValueChange = { green ->
@@ -44,6 +51,7 @@ fun RGBControls(modifier: Modifier, color: Color, onColorChange: (Color) -> Unit
             )
             LabeledSlider(
                 modifier = Modifier.weight(1f),
+                tint = tint,
                 label = "Blue",
                 value = color.blue,
                 onValueChange = { blue ->
