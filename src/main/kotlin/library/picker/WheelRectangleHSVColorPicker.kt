@@ -30,23 +30,11 @@ fun WheelRectangleHSVColorPicker(
 
     val (wheelHue, setWheelHue) = remember { mutableStateOf(color.hue()) }
 
-    val (saturation, setSaturation) = remember { mutableStateOf(color.saturation()) }
-
-    val (value, setValue) = remember { mutableStateOf(color.saturation()) }
-
     WheelColorPicker(
         modifier = modifier.aspectRatio(1f),
         thicknessPercentage = wheelThicknessPercentage,
         hue = wheelHue,
-        onHueChange = { changedWheelHue ->
-            updatedOnColorChange(
-                Color.hsv(
-                    hue = changedWheelHue.also(setWheelHue),
-                    saturation = saturation,
-                    value = value
-                )
-            )
-        },
+        onHueChange = setWheelHue,
         content = { diameter ->
             RectangleHSVColorPicker(
                 modifier = Modifier.size((diameter / sqrt(2f)).dp.let { side -> DpSize(side, side) }).composed {
@@ -55,14 +43,11 @@ fun WheelRectangleHSVColorPicker(
                 indicatorThickness = indicatorThickness,
                 indicatorRadius = indicatorRadius,
                 isRotating = isRotating,
-                color = color,
+                hue = wheelHue,
+                color = Color.hsv(hue = wheelHue, saturation = color.saturation(), value = color.value()),
                 onColorChange = { changedColor ->
                     updatedOnColorChange(
-                        Color.hsv(
-                            hue = wheelHue,
-                            saturation = changedColor.saturation().also(setSaturation),
-                            value = changedColor.value().also(setValue)
-                        )
+                        Color.hsv(hue = wheelHue, saturation = changedColor.saturation(), value = changedColor.value())
                     )
                 }
             )

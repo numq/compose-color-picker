@@ -17,6 +17,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.PathOperation
+import androidx.compose.ui.graphics.drawscope.rotate
 import library.color.ColorCalculation
 import library.color.hue
 import library.offset.OffsetMapper
@@ -115,21 +116,18 @@ fun WheelColorPicker(
             indicatorOffsetPercentage = indicatorOffsetPercentage,
             onIndicatorOffsetPercentage = { offsetPercentage ->
                 updatedOnHueChange(ColorCalculation.calculateWheelColor(offsetPercentage).hue())
-//                updatedOnColorChange(
-//                    Color.hsv(
-//                        hue = ColorCalculation.calculateWheelColor(offsetPercentage).hue(),
-//                        saturation = color.saturation(),
-//                        value = color.value()
-//                    )
-//                )
             },
-            indicatorContent = { offset ->
-                drawLine(
-                    color = Color.White,
-                    start = size.center,
-                    end = offset.minus(Offset(x = 1f, y = 0f)),
-                    strokeWidth = 2f
-                )
+            indicatorContent = { _ ->
+                rotate(hue) {
+                    rotate(-90f) {
+                        drawLine(
+                            color = Color.White,
+                            start = size.center,
+                            end = size.center.plus(Offset(0f, size.height)),
+                            strokeWidth = 1f
+                        )
+                    }
+                }
             },
             content = {
                 drawPath(path = path, brush = gradient)

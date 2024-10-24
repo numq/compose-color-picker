@@ -15,7 +15,6 @@ import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.luminance
 import library.color.ColorCalculation
-import library.color.hue
 import library.offset.OffsetMapper
 import library.offset.OffsetPercentageCalculation
 import library.picker.core.ColorPickerComponent
@@ -30,16 +29,11 @@ fun TriangleHSVColorPicker(
     indicatorThickness: Float,
     indicatorRadius: Float,
     isRotating: Boolean,
+    hue: Float,
     color: Color,
     onColorChange: (Color) -> Unit,
 ) {
     val updatedOnColorChange by rememberUpdatedState(onColorChange)
-
-    val hue by remember(color) {
-        derivedStateOf {
-            color.hue()
-        }
-    }
 
     val rotationDegrees by remember(isRotating, hue) {
         derivedStateOf {

@@ -14,6 +14,52 @@ import library.color.value
 import library.picker.core.ColorPickerConstant
 import library.picker.core.WheelColorPicker
 
+//@Composable
+//fun WheelTriangleHSLColorPicker(
+//    modifier: Modifier,
+//    indicatorThickness: Float = ColorPickerConstant.DEFAULT_INDICATOR_THICKNESS,
+//    indicatorRadius: Float = ColorPickerConstant.DEFAULT_INDICATOR_RADIUS,
+//    wheelThicknessPercentage: Float = ColorPickerConstant.DEFAULT_THICKNESS_PERCENTAGE,
+//    isRotating: Boolean,
+//    color: Color,
+//    onColorChange: (Color) -> Unit,
+//) {
+//    val updatedOnColorChange by rememberUpdatedState(onColorChange)
+//
+//    val hue by remember {
+//        derivedStateOf {
+//            color.hue()
+//        }
+//    }
+//
+//    WheelColorPicker(
+//        modifier = modifier.aspectRatio(1f),
+//        thicknessPercentage = wheelThicknessPercentage,
+//        hue = hue,
+//        onHueChange = { changedHue ->
+//            updatedOnColorChange(
+//                Color.hsv(
+//                    hue = changedHue,
+//                    saturation = color.saturation(),
+//                    value = color.value()
+//                )
+//            )
+//        },
+//        content = { diameter ->
+//            TriangleHSVColorPicker(
+//                modifier = Modifier.size(diameter.dp).composed {
+//                    if (isRotating) rotate(-90f) else this
+//                },
+//                indicatorThickness = indicatorThickness,
+//                indicatorRadius = indicatorRadius,
+//                isRotating = isRotating,
+//                color = color,
+//                onColorChange = updatedOnColorChange
+//            )
+//        }
+//    )
+//}
+
 @Composable
 fun WheelTriangleHSLColorPicker(
     modifier: Modifier,
@@ -28,23 +74,11 @@ fun WheelTriangleHSLColorPicker(
 
     val (wheelHue, setWheelHue) = remember { mutableStateOf(color.hue()) }
 
-    val (saturation, setSaturation) = remember { mutableStateOf(color.saturation()) }
-
-    val (value, setValue) = remember { mutableStateOf(color.saturation()) }
-
     WheelColorPicker(
         modifier = modifier.aspectRatio(1f),
         thicknessPercentage = wheelThicknessPercentage,
         hue = wheelHue,
-        onHueChange = { changedWheelHue ->
-            updatedOnColorChange(
-                Color.hsv(
-                    hue = changedWheelHue.also(setWheelHue),
-                    saturation = saturation,
-                    value = value
-                )
-            )
-        },
+        onHueChange = setWheelHue,
         content = { diameter ->
             TriangleHSVColorPicker(
                 modifier = Modifier.size(diameter.dp).composed {
@@ -53,14 +87,11 @@ fun WheelTriangleHSLColorPicker(
                 indicatorThickness = indicatorThickness,
                 indicatorRadius = indicatorRadius,
                 isRotating = isRotating,
-                color = color,
+                hue = wheelHue,
+                color = Color.hsv(hue = wheelHue, saturation = color.saturation(), value = color.value()),
                 onColorChange = { changedColor ->
                     updatedOnColorChange(
-                        Color.hsv(
-                            hue = wheelHue,
-                            saturation = changedColor.saturation().also(setSaturation),
-                            value = changedColor.value().also(setValue)
-                        )
+                        Color.hsv(hue = wheelHue, saturation = changedColor.saturation(), value = changedColor.value())
                     )
                 }
             )
