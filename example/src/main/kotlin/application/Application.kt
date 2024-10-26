@@ -118,9 +118,8 @@ fun main() = singleWindowApplication(title = "Color Picker") {
                         modifier = Modifier.fillMaxSize().padding(paddingValues).background(color = backgroundColor)
                             .padding(8.dp),
                         horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.SpaceEvenly
+                        verticalArrangement = Arrangement.spacedBy(space = 8.dp, alignment = Alignment.CenterVertically)
                     ) {
-
                         Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
                             Text(
                                 text = backgroundColor.toArgb().toHexString(),
@@ -129,13 +128,13 @@ fun main() = singleWindowApplication(title = "Color Picker") {
                         }
                         content(backgroundColor)
                         RGBControls(
-                            modifier = Modifier.weight(1f),
+                            modifier = Modifier.fillMaxWidth(),
                             tint = indicationColor,
                             color = backgroundColor,
                             onColorChange = setBackgroundColor
                         )
                         HSVControls(
-                            modifier = Modifier.weight(1f),
+                            modifier = Modifier.fillMaxWidth(),
                             tint = indicationColor,
                             color = backgroundColor,
                             onColorChange = setBackgroundColor
