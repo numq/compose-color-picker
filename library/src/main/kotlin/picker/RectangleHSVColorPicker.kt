@@ -10,6 +10,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.luminance
 import color.ColorCalculation
+import color.saturation
+import color.value
 import offset.OffsetPercentageCalculation
 import picker.core.ColorPickerComponent
 
@@ -29,6 +31,10 @@ fun RectangleHSVColorPicker(
         derivedStateOf {
             OffsetPercentageCalculation.calculateHSVRectangleOffsetPercentage(color)
         }
+    }
+
+    LaunchedEffect(hue) {
+        updatedOnColorChange(Color.hsv(hue = hue, saturation = color.saturation(), value = color.value()))
     }
 
     val rotationDegrees by remember(isRotating, hue) {

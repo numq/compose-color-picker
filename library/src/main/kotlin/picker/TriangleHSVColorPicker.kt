@@ -15,6 +15,8 @@ import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.luminance
 import color.ColorCalculation
+import color.saturation
+import color.value
 import offset.OffsetMapper
 import offset.OffsetPercentageCalculation
 import picker.core.ColorPickerComponent
@@ -39,6 +41,10 @@ fun TriangleHSVColorPicker(
         derivedStateOf {
             if (isRotating) (hue % 360f) + 90f else 0f
         }
+    }
+
+    LaunchedEffect(hue) {
+        updatedOnColorChange(Color.hsv(hue = hue, saturation = color.saturation(), value = color.value()))
     }
 
     BoxWithConstraints(modifier = modifier, contentAlignment = Alignment.Center) {

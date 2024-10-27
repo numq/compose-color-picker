@@ -14,52 +14,6 @@ import color.value
 import picker.core.ColorPickerConstant
 import picker.core.WheelColorPicker
 
-//@Composable
-//fun WheelTriangleHSLColorPicker(
-//    modifier: Modifier,
-//    indicatorThickness: Float = ColorPickerConstant.DEFAULT_INDICATOR_THICKNESS,
-//    indicatorRadius: Float = ColorPickerConstant.DEFAULT_INDICATOR_RADIUS,
-//    wheelThicknessPercentage: Float = ColorPickerConstant.DEFAULT_THICKNESS_PERCENTAGE,
-//    isRotating: Boolean,
-//    color: Color,
-//    onColorChange: (Color) -> Unit,
-//) {
-//    val updatedOnColorChange by rememberUpdatedState(onColorChange)
-//
-//    val hue by remember {
-//        derivedStateOf {
-//            color.hue()
-//        }
-//    }
-//
-//    WheelColorPicker(
-//        modifier = modifier.aspectRatio(1f),
-//        thicknessPercentage = wheelThicknessPercentage,
-//        hue = hue,
-//        onHueChange = { changedHue ->
-//            updatedOnColorChange(
-//                Color.hsv(
-//                    hue = changedHue,
-//                    saturation = color.saturation(),
-//                    value = color.value()
-//                )
-//            )
-//        },
-//        content = { diameter ->
-//            TriangleHSVColorPicker(
-//                modifier = Modifier.size(diameter.dp).composed {
-//                    if (isRotating) rotate(-90f) else this
-//                },
-//                indicatorThickness = indicatorThickness,
-//                indicatorRadius = indicatorRadius,
-//                isRotating = isRotating,
-//                color = color,
-//                onColorChange = updatedOnColorChange
-//            )
-//        }
-//    )
-//}
-
 @Composable
 fun WheelTriangleHSLColorPicker(
     modifier: Modifier,
@@ -73,7 +27,7 @@ fun WheelTriangleHSLColorPicker(
     val updatedOnColorChange by rememberUpdatedState(onColorChange)
 
     val (wheelHue, setWheelHue) = remember { mutableStateOf(color.hue()) }
-
+    
     WheelColorPicker(
         modifier = modifier.aspectRatio(1f),
         thicknessPercentage = wheelThicknessPercentage,
