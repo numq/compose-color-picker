@@ -18,11 +18,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.PathOperation
 import androidx.compose.ui.graphics.drawscope.rotate
-import color.ColorCalculation
-import color.hue
 import offset.OffsetMapper
 import offset.OffsetPercentageCalculation
 import shape.WheelShape
+import kotlin.math.atan2
 
 @Composable
 fun WheelColorPicker(
@@ -33,8 +32,6 @@ fun WheelColorPicker(
     content: @Composable BoxWithConstraintsScope.(diameter: Float) -> Unit,
 ) {
     require(hue in 0f..360f) { "Hue should be within 0f..360f" }
-
-    require(thicknessPercentage >= 0f) { "Thickness percentage should not be negative" }
 
     val updatedOnHueChange by rememberUpdatedState(onHueChange)
 
@@ -114,8 +111,17 @@ fun WheelColorPicker(
                 )
             },
             indicatorOffsetPercentage = indicatorOffsetPercentage,
-            onIndicatorOffsetPercentage = { offsetPercentage ->
-                updatedOnHueChange(ColorCalculation.calculateWheelColor(offsetPercentage).hue())
+            onIndicatorOffsetPercentage = { (offsetX, offsetY) ->
+                Offset(0.5f, 0.5f).run {
+                    val angleInRadians = atan2(offsetY - y, offsetX - x)
+                    var angleInDegrees = Math.toDegrees(angleInRadians.toDouble()).toFloat()
+
+                    if (angleInDegrees < 0) {
+                        angleInDegrees += 360f
+                    }
+
+                    updatedOnHueChange(angleInDegrees)
+                }
             },
             indicatorContent = { _ ->
                 rotate(hue) {

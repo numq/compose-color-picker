@@ -4,7 +4,6 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.geometry.center
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.isSpecified
 import offset.OffsetPercentage
 import kotlin.math.abs
 import kotlin.math.atan2
@@ -48,33 +47,14 @@ internal object ColorCalculation {
         return Color.hsl(hue = hue, saturation = saturation, lightness = lightness)
     }
 
-    fun calculateWheelColor(offsetPercentage: OffsetPercentage): Color {
-        val center = Offset(0.5f, 0.5f)
-        val offsetX = offsetPercentage.x - center.x
-        val offsetY = offsetPercentage.y - center.y
-
-        val angleInRadians = atan2(offsetY, offsetX)
-        var angleInDegrees = Math.toDegrees(angleInRadians.toDouble()).toFloat()
-
-        if (angleInDegrees < 0) {
-            angleInDegrees += 360f
-        }
-
-        val saturation = 1f
-
-        val value = 1f
-
-        return Color.hsv(hue = angleInDegrees, saturation = saturation, value = value)
-    }
-
     fun calculateHSVRectangleColor(hue: Float, offsetPercentage: OffsetPercentage): Color {
         require(hue in 0f..360f) { "Hue should be within 0f..360f" }
 
         return Color.hsv(hue = hue, saturation = offsetPercentage.x, value = 1f - offsetPercentage.y)
     }
 
-    fun calculateHSVTriangleColor(color: Color, offsetPercentage: OffsetPercentage, size: Size): Color {
-        require(color.isSpecified) { "Color must be specified" }
+    fun calculateHSVTriangleColor(hue: Float, offsetPercentage: OffsetPercentage, size: Size): Color {
+        require(hue in 0f..360f) { "Hue should be within 0f..360f" }
 
         val x = offsetPercentage.x * size.width
         val y = offsetPercentage.y * size.height
@@ -86,8 +66,6 @@ internal object ColorCalculation {
 
         val saturation = (1f - 2f * normalizedY) / (sqrt3 * normalizedX - normalizedY + 2f).toFloat()
         val value = ((sqrt3 * normalizedX - normalizedY + 2f) / 3f).toFloat()
-
-        val hue = color.hue()
 
         val normalizedSaturation = saturation.coerceIn(0f, 1f)
 

@@ -5,10 +5,10 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.drawscope.Stroke
-import androidx.compose.ui.graphics.luminance
+import androidx.compose.ui.graphics.drawscope.DrawScope
 import color.ColorCalculation
 import color.saturation
 import color.value
@@ -18,23 +18,28 @@ import picker.core.ColorPickerComponent
 @Composable
 fun RectangleHSVColorPicker(
     modifier: Modifier,
-    indicatorThickness: Float,
-    indicatorRadius: Float,
     isRotating: Boolean,
+    indicatorContent: DrawScope.(indicatorOffset: Offset) -> Unit,
     hue: Float,
-    color: Color,
-    onColorChange: (Color) -> Unit,
+    saturation: Float,
+    onSaturationChange: (Float) -> Unit,
+    value: Float,
+    onValueChange: (Float) -> Unit,
 ) {
-    val updatedOnColorChange by rememberUpdatedState(onColorChange)
+    require(hue in 0f..360f) { "Hue should be within 0f..360f" }
 
-    val innerIndicatorOffsetPercentage by remember(color) {
+    require(saturation in 0f..1f) { "Saturation should be within 0f..1f" }
+
+    require(value in 0f..1f) { "Value should be within 0f..1f" }
+
+    val updatedOnSaturationChange by rememberUpdatedState(onSaturationChange)
+
+    val updatedOnValueChange by rememberUpdatedState(onValueChange)
+
+    val innerIndicatorOffsetPercentage by remember(saturation, value) {
         derivedStateOf {
-            OffsetPercentageCalculation.calculateHSVRectangleOffsetPercentage(color)
+            OffsetPercentageCalculation.calculateHSVRectangleOffsetPercentage(saturation = saturation, value = value)
         }
-    }
-
-    LaunchedEffect(hue) {
-        updatedOnColorChange(Color.hsv(hue = hue, saturation = color.saturation(), value = color.value()))
     }
 
     val rotationDegrees by remember(isRotating, hue) {
@@ -58,17 +63,13 @@ fun RectangleHSVColorPicker(
     ColorPickerComponent(
         modifier = modifier.fillMaxSize().rotate(rotationDegrees).clipToBounds(),
         indicatorOffsetPercentage = innerIndicatorOffsetPercentage,
-        onIndicatorOffsetPercentage = { offsetPercentage ->
-            updatedOnColorChange(ColorCalculation.calculateHSVRectangleColor(hue, offsetPercentage))
+        onIndicatorOffsetPercentage = { indicatorOffsetPercentage ->
+            ColorCalculation.calculateHSVRectangleColor(hue, indicatorOffsetPercentage).run {
+                updatedOnSaturationChange(saturation())
+                updatedOnValueChange(value())
+            }
         },
-        indicatorContent = { offset ->
-            drawCircle(
-                color = if (color.luminance() > .5f) Color.Black else Color.White,
-                radius = indicatorRadius,
-                center = offset,
-                style = Stroke(width = indicatorThickness)
-            )
-        },
+        indicatorContent = indicatorContent,
         content = {
             drawRect(brush = backgroundGradient)
             drawRect(brush = foregroundGradient)

@@ -23,7 +23,7 @@ import picker.core.ColorPickerConstant
 import shape.CircularShape
 
 @Composable
-fun CircularHSVColorPicker(
+fun CircularColorPicker(
     modifier: Modifier,
     indicatorThickness: Float = ColorPickerConstant.DEFAULT_INDICATOR_THICKNESS,
     indicatorRadius: Float = ColorPickerConstant.DEFAULT_INDICATOR_RADIUS,

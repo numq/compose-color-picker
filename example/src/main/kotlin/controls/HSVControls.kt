@@ -5,43 +5,24 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material.Text
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import color.hue
-import color.saturation
-import color.value
 import slider.LabeledSlider
 
 @Composable
 fun HSVControls(
     modifier: Modifier,
     tint: Color,
-    color: Color,
-    onColorChange: (Color) -> Unit,
+    hue: Float,
+    onHueChange: (Float) -> Unit,
+    saturation: Float,
+    onSaturationChange: (Float) -> Unit,
+    value: Float,
+    onValueChange: (Float) -> Unit,
 ) {
-    val updatedOnColorChange by rememberUpdatedState(onColorChange)
-
-    val colorHue by remember(color) {
-        derivedStateOf {
-            color.hue()
-        }
-    }
-
-    val colorSaturation by remember(color) {
-        derivedStateOf {
-            color.saturation()
-        }
-    }
-
-    val colorValue by remember(color) {
-        derivedStateOf {
-            color.value()
-        }
-    }
-
     Column(
         modifier = modifier,
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -57,47 +38,23 @@ fun HSVControls(
                 modifier = Modifier.weight(1f),
                 tint = tint,
                 label = "Hue",
-                value = colorHue,
+                value = hue,
                 valueRange = 0f..360f,
-                onValueChange = { hue ->
-                    updatedOnColorChange(
-                        Color.hsv(
-                            hue = hue,
-                            saturation = colorSaturation,
-                            value = colorValue
-                        )
-                    )
-                }
+                onValueChange = onHueChange
             )
             LabeledSlider(
                 modifier = Modifier.weight(1f),
                 tint = tint,
                 label = "Saturation",
-                value = colorSaturation,
-                onValueChange = { saturation ->
-                    updatedOnColorChange(
-                        Color.hsv(
-                            hue = colorHue,
-                            saturation = saturation,
-                            value = colorValue
-                        )
-                    )
-                }
+                value = saturation,
+                onValueChange = onSaturationChange
             )
             LabeledSlider(
                 modifier = Modifier.weight(1f),
                 tint = tint,
                 label = "Value",
-                value = colorValue,
-                onValueChange = { value ->
-                    updatedOnColorChange(
-                        Color.hsv(
-                            hue = colorHue,
-                            saturation = colorSaturation,
-                            value = value
-                        )
-                    )
-                }
+                value = value,
+                onValueChange = onValueChange
             )
         }
     }

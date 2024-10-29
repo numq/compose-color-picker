@@ -1,147 +1,122 @@
 package application
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.Card
-import androidx.compose.material.Scaffold
-import androidx.compose.material.Text
-import androidx.compose.material.TopAppBar
-import androidx.compose.runtime.*
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.luminance
-import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.WindowState
 import androidx.compose.ui.window.singleWindowApplication
+import color.hue
+import color.saturation
+import color.value
 import controls.HSVControls
 import controls.RGBControls
-import picker.CircularHSVColorPicker
+import picker.CircularColorPicker
 import picker.RectangularColorPicker
-import picker.WheelRectangleHSVColorPicker
-import picker.WheelTriangleHSLColorPicker
+import picker.WheelRectangleColorPickerHSV
+import picker.WheelTriangleColorPickerHSV
 
-@OptIn(ExperimentalStdlibApi::class)
-fun main() = singleWindowApplication(title = "Color Picker") {
-    val (backgroundColor, setBackgroundColor) = remember { mutableStateOf(Color.White) }
+fun main() = singleWindowApplication(title = "Color Picker", state = WindowState(size = DpSize(width = 512.dp, height = 512.dp))) {
+    val initialColor = Color.White
+
+    val (hue, setHue) = remember {
+        mutableStateOf(initialColor.hue())
+    }
+
+    val (saturation, setSaturation) = remember {
+        mutableStateOf(initialColor.saturation())
+    }
+
+    val (value, setValue) = remember {
+        mutableStateOf(initialColor.value())
+    }
+
+    val backgroundColor by remember(hue, saturation, value) {
+        derivedStateOf {
+            Color.hsv(hue = hue, saturation = saturation, value = value)
+        }
+    }
 
     val indicationColor = remember(backgroundColor) {
-        if (backgroundColor.luminance() < .5f) Color.White else Color.Black
+        if (backgroundColor.luminance() > .5f) Color.Black else Color.White
     }
 
-    val (selectedColorPicker, setSelectedColorPicker) = remember {
-        mutableStateOf<Pair<String, @Composable (Color) -> Unit>?>(null)
-    }
-
-    Row(
-        modifier = Modifier.fillMaxSize(),
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically
+    Column(
+        modifier = Modifier.fillMaxSize().background(backgroundColor).padding(8.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
     ) {
-        Column(
-            modifier = Modifier.fillMaxHeight().width(IntrinsicSize.Max).padding(4.dp),
-            horizontalAlignment = Alignment.Start,
-            verticalArrangement = Arrangement.spacedBy(space = 4.dp, alignment = Alignment.CenterVertically)
+        Row(
+            modifier = Modifier.weight(1f),
+            horizontalArrangement = Arrangement.spacedBy(space = 8.dp),
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            val colorPickers by remember(backgroundColor) {
-                derivedStateOf {
-                    listOf<Pair<String, @Composable (Color) -> Unit>>(
-                        "Circular HSV" to @Composable { color ->
-                            CircularHSVColorPicker(
-                                modifier = Modifier.weight(1f),
-                                color = color,
-                                onColorChange = setBackgroundColor
-                            )
-                        },
-                        "Rectangular" to @Composable { color ->
-                            RectangularColorPicker(
-                                modifier = Modifier.weight(1f),
-                                color = color,
-                                onColorChange = setBackgroundColor
-                            )
-                        },
-                        "Wheel rectangle" to @Composable { color ->
-                            WheelRectangleHSVColorPicker(
-                                modifier = Modifier.weight(1f),
-                                isRotating = false,
-                                color = color,
-                                onColorChange = setBackgroundColor
-                            )
-                        },
-                        "Wheel rectangle rotating" to @Composable { color ->
-                            WheelRectangleHSVColorPicker(
-                                modifier = Modifier.weight(1f),
-                                isRotating = true,
-                                color = color,
-                                onColorChange = setBackgroundColor
-                            )
-                        },
-                        "Wheel triangle" to @Composable { color ->
-                            WheelTriangleHSLColorPicker(
-                                modifier = Modifier.weight(1f),
-                                isRotating = false,
-                                color = color,
-                                onColorChange = setBackgroundColor
-                            )
-                        },
-                        "Wheel triangle rotating" to @Composable { color ->
-                            WheelTriangleHSLColorPicker(
-                                modifier = Modifier.weight(1f),
-                                isRotating = true,
-                                color = color,
-                                onColorChange = setBackgroundColor
-                            )
-                        }
-                    )
+            CircularColorPicker(
+                modifier = Modifier.weight(1f),
+                color = backgroundColor,
+                onColorChange = { color ->
+                    setHue(color.hue())
+                    setSaturation(color.saturation())
+                    setValue(color.value())
                 }
-            }
-
-            colorPickers.forEach { colorPicker ->
-                Card(modifier = Modifier.weight(1f)) {
-                    Box(modifier = Modifier.fillMaxSize().clickable {
-                        setSelectedColorPicker(colorPicker)
-                    }.padding(4.dp), contentAlignment = Alignment.CenterStart) {
-                        Text(colorPicker.first)
-                    }
+            )
+            RectangularColorPicker(
+                modifier = Modifier.weight(1f),
+                color = backgroundColor,
+                onColorChange = { color ->
+                    setHue(color.hue())
+                    setSaturation(color.saturation())
+                    setValue(color.value())
                 }
-            }
+            )
+            WheelRectangleColorPickerHSV(
+                modifier = Modifier.weight(1f),
+                isRotating = true,
+                hue = hue,
+                onHueChange = setHue,
+                saturation = saturation,
+                onSaturationChange = setSaturation,
+                value = value,
+                onValueChange = setValue,
+            )
+            WheelTriangleColorPickerHSV(
+                modifier = Modifier.weight(1f),
+                isRotating = true,
+                hue = hue,
+                onHueChange = setHue,
+                saturation = saturation,
+                onSaturationChange = setSaturation,
+                value = value,
+                onValueChange = setValue,
+            )
         }
-        Box(modifier = Modifier.weight(1f), contentAlignment = Alignment.Center) {
-            selectedColorPicker?.let { (name, content) ->
-                Scaffold(topBar = {
-                    TopAppBar(title = {
-                        Text(name)
-                    })
-                }) { paddingValues ->
-                    Column(
-                        modifier = Modifier.fillMaxSize().padding(paddingValues).background(color = backgroundColor)
-                            .padding(8.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.spacedBy(space = 8.dp, alignment = Alignment.CenterVertically)
-                    ) {
-                        Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
-                            Text(
-                                text = backgroundColor.toArgb().toHexString(),
-                                color = indicationColor
-                            )
-                        }
-                        content(backgroundColor)
-                        RGBControls(
-                            modifier = Modifier.fillMaxWidth(),
-                            tint = indicationColor,
-                            color = backgroundColor,
-                            onColorChange = setBackgroundColor
-                        )
-                        HSVControls(
-                            modifier = Modifier.fillMaxWidth(),
-                            tint = indicationColor,
-                            color = backgroundColor,
-                            onColorChange = setBackgroundColor
-                        )
-                    }
-                }
+        RGBControls(
+            modifier = Modifier.fillMaxWidth(),
+            tint = indicationColor,
+            color = backgroundColor,
+            onColorChange = { changedColor ->
+                setHue(changedColor.hue())
+                setSaturation(changedColor.saturation())
+                setValue(changedColor.value())
             }
-        }
+        )
+        HSVControls(
+            modifier = Modifier.fillMaxWidth(),
+            tint = indicationColor,
+            hue = hue,
+            onHueChange = setHue,
+            saturation = saturation,
+            onSaturationChange = setSaturation,
+            value = value,
+            onValueChange = setValue
+        )
     }
 }

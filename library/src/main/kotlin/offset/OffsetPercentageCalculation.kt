@@ -3,8 +3,9 @@ package offset
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.geometry.center
+import androidx.compose.ui.geometry.isSpecified
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.isUnspecified
+import androidx.compose.ui.graphics.isSpecified
 import color.hue
 import color.lightness
 import color.saturation
@@ -15,6 +16,8 @@ import kotlin.math.sqrt
 
 internal object OffsetPercentageCalculation {
     fun calculateHSVCircleOffsetPercentage(color: Color, radius: Float): OffsetPercentage {
+        require(color.isSpecified) { "Color should be specified" }
+
         val hue = color.hue()
         val saturation = color.saturation()
         val value = color.value()
@@ -33,6 +36,8 @@ internal object OffsetPercentageCalculation {
     }
 
     fun calculateFullRectangleOffsetPercentage(color: Color): OffsetPercentage {
+        require(color.isSpecified) { "Color should be specified" }
+
         val hue = color.hue()
         val lightness = color.lightness()
 
@@ -40,6 +45,8 @@ internal object OffsetPercentageCalculation {
     }
 
     fun calculateWheelOffsetPercentage(hue: Float): OffsetPercentage {
+        require(hue in 0f..360f) { "Hue should be within 0f..360f" }
+
         val center = Offset(0.5f, 0.5f)
         val angleInRadians = Math.toRadians(hue.toDouble())
 
@@ -49,20 +56,20 @@ internal object OffsetPercentageCalculation {
         )
     }
 
-    fun calculateHSVRectangleOffsetPercentage(color: Color): OffsetPercentage {
-        if (color.isUnspecified) return OffsetPercentage.Zero
+    fun calculateHSVRectangleOffsetPercentage(saturation: Float, value: Float): OffsetPercentage {
+        require(saturation in 0f..1f) { "Saturation should be within 0f..1f" }
 
-        return OffsetPercentage(x = color.saturation(), y = 1f - color.value())
+        require(value in 0f..1f) { "Value should be within 0f..1f" }
+
+        return OffsetPercentage(x = saturation, y = 1f - value)
     }
 
-    fun calculateHSVTriangleOffsetPercentage(
-        color: Color,
-        size: Size,
-    ): OffsetPercentage {
-        if (color.isUnspecified) return OffsetPercentage.Zero
+    fun calculateHSVTriangleOffsetPercentage(saturation: Float, value: Float, size: Size): OffsetPercentage {
+        require(saturation in 0f..1f) { "Saturation should be within 0f..1f" }
 
-        val saturation = color.saturation()
-        val value = color.value()
+        require(value in 0f..1f) { "Value should be within 0f..1f" }
+
+        require(size.isSpecified) { "Size should be specified" }
 
         val radius = size.minDimension / 2f
         val center = size.center

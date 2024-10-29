@@ -12,8 +12,7 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
-import androidx.compose.ui.graphics.drawscope.Stroke
-import androidx.compose.ui.graphics.luminance
+import androidx.compose.ui.graphics.drawscope.DrawScope
 import color.ColorCalculation
 import color.saturation
 import color.value
@@ -28,14 +27,23 @@ import kotlin.math.sin
 @Composable
 fun TriangleHSVColorPicker(
     modifier: Modifier,
-    indicatorThickness: Float,
-    indicatorRadius: Float,
     isRotating: Boolean,
+    indicatorContent: DrawScope.(indicatorOffset: Offset) -> Unit,
     hue: Float,
-    color: Color,
-    onColorChange: (Color) -> Unit,
+    saturation: Float,
+    onSaturationChange: (Float) -> Unit,
+    value: Float,
+    onValueChange: (Float) -> Unit,
 ) {
-    val updatedOnColorChange by rememberUpdatedState(onColorChange)
+    require(hue in 0f..360f) { "Hue should be within 0f..360f" }
+
+    require(saturation in 0f..1f) { "Saturation should be within 0f..1f" }
+
+    require(value in 0f..1f) { "Value should be within 0f..1f" }
+
+    val updatedOnSaturationChange by rememberUpdatedState(onSaturationChange)
+
+    val updatedOnValueChange by rememberUpdatedState(onValueChange)
 
     val rotationDegrees by remember(isRotating, hue) {
         derivedStateOf {
@@ -43,18 +51,25 @@ fun TriangleHSVColorPicker(
         }
     }
 
-    LaunchedEffect(hue) {
-        updatedOnColorChange(Color.hsv(hue = hue, saturation = color.saturation(), value = color.value()))
-    }
-
     BoxWithConstraints(modifier = modifier, contentAlignment = Alignment.Center) {
         val colorPickerSize = remember(maxWidth, maxHeight) {
             Size(maxWidth.value, maxHeight.value)
         }
 
-        val innerIndicatorOffsetPercentage by remember(color, colorPickerSize) {
+        val innerIndicatorOffsetPercentage by remember(saturation, value) {
             derivedStateOf {
-                OffsetPercentageCalculation.calculateHSVTriangleOffsetPercentage(color, colorPickerSize)
+                OffsetPercentageCalculation.calculateHSVTriangleOffsetPercentage(
+                    saturation = saturation,
+                    value = value,
+                    size = colorPickerSize
+                )
+            }
+        }
+
+        LaunchedEffect(innerIndicatorOffsetPercentage, colorPickerSize) {
+            ColorCalculation.calculateHSVTriangleColor(hue, innerIndicatorOffsetPercentage, colorPickerSize).run {
+                updatedOnSaturationChange(saturation())
+                updatedOnValueChange(value())
             }
         }
 
@@ -106,23 +121,13 @@ fun TriangleHSVColorPicker(
                 OffsetMapper.mapTriangularOffset(offset = offset, vertices = vertices)
             },
             indicatorOffsetPercentage = innerIndicatorOffsetPercentage,
-            onIndicatorOffsetPercentage = { offsetPercentage ->
-                updatedOnColorChange(
-                    ColorCalculation.calculateHSVTriangleColor(
-                        color,
-                        offsetPercentage,
-                        colorPickerSize
-                    )
-                )
+            onIndicatorOffsetPercentage = { indicatorOffsetPercentage ->
+                ColorCalculation.calculateHSVTriangleColor(hue, indicatorOffsetPercentage, colorPickerSize).run {
+                    updatedOnSaturationChange(saturation())
+                    updatedOnValueChange(value())
+                }
             },
-            indicatorContent = { offset ->
-                drawCircle(
-                    color = if (color.luminance() > .5f) Color.Black else Color.White,
-                    radius = indicatorRadius,
-                    center = offset,
-                    style = Stroke(width = indicatorThickness)
-                )
-            },
+            indicatorContent = indicatorContent,
             content = {
                 drawPath(path = trianglePath, brush = backgroundGradient)
                 drawPath(path = trianglePath, brush = foregroundGradient)
