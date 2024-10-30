@@ -1,4 +1,4 @@
-package picker
+package picker.rectangular
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.aspectRatio
@@ -14,8 +14,8 @@ import androidx.compose.ui.graphics.isSpecified
 import androidx.compose.ui.graphics.luminance
 import color.ColorCalculation
 import offset.OffsetPercentageCalculation
-import picker.core.ColorPickerComponent
-import picker.core.ColorPickerConstant
+import picker.ColorPickerComponent
+import picker.ColorPickerConstant
 
 @Composable
 fun RectangularColorPicker(

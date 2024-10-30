@@ -1,4 +1,4 @@
-package picker
+package picker.circular
 
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.size
@@ -18,8 +18,8 @@ import androidx.compose.ui.unit.min
 import color.ColorCalculation
 import offset.OffsetMapper
 import offset.OffsetPercentageCalculation
-import picker.core.ColorPickerComponent
-import picker.core.ColorPickerConstant
+import picker.ColorPickerComponent
+import picker.ColorPickerConstant
 import shape.CircularShape
 
 @Composable

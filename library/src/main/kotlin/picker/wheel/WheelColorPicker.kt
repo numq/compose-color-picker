@@ -1,4 +1,4 @@
-package picker.core
+package picker.wheel
 
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.BoxWithConstraintsScope
@@ -17,9 +17,10 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.PathOperation
-import androidx.compose.ui.graphics.drawscope.rotate
+import androidx.compose.ui.graphics.drawscope.DrawScope
 import offset.OffsetMapper
 import offset.OffsetPercentageCalculation
+import picker.ColorPickerComponent
 import shape.WheelShape
 import kotlin.math.atan2
 
@@ -27,6 +28,7 @@ import kotlin.math.atan2
 fun WheelColorPicker(
     modifier: Modifier,
     thicknessPercentage: Float,
+    indicatorContent: (DrawScope.(indicatorOffset: Offset) -> Unit),
     hue: Float,
     onHueChange: (Float) -> Unit,
     content: @Composable BoxWithConstraintsScope.(diameter: Float) -> Unit,
@@ -123,18 +125,7 @@ fun WheelColorPicker(
                     updatedOnHueChange(angleInDegrees)
                 }
             },
-            indicatorContent = { _ ->
-                rotate(hue) {
-                    rotate(-90f) {
-                        drawLine(
-                            color = Color.White,
-                            start = size.center,
-                            end = size.center.plus(Offset(0f, size.height)),
-                            strokeWidth = 1f
-                        )
-                    }
-                }
-            },
+            indicatorContent = indicatorContent,
             content = {
                 drawPath(path = path, brush = gradient)
             })

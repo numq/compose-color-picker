@@ -1,4 +1,4 @@
-package picker
+package picker.wheel.triangle
 
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.size
@@ -8,20 +8,23 @@ import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
 import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.center
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
-import androidx.compose.ui.unit.DpSize
+import androidx.compose.ui.graphics.drawscope.rotate
 import androidx.compose.ui.unit.dp
-import picker.core.ColorPickerConstant
-import picker.core.WheelColorPicker
-import kotlin.math.sqrt
+import picker.ColorPickerConstant
+import picker.wheel.WheelColorPicker
 
 @Composable
-fun WheelRectangleColorPickerHSV(
+fun WheelTriangleColorPickerHSV(
     modifier: Modifier,
     indicatorThickness: Float = ColorPickerConstant.DEFAULT_INDICATOR_THICKNESS,
     indicatorRadius: Float = ColorPickerConstant.DEFAULT_INDICATOR_RADIUS,
     wheelThicknessPercentage: Float = ColorPickerConstant.DEFAULT_THICKNESS_PERCENTAGE,
+    wheelIndicatorContent: (DrawScope.(indicatorOffset: Offset) -> Unit)? = null,
     isRotating: Boolean,
     hue: Float,
     onHueChange: (Float) -> Unit,
@@ -45,14 +48,25 @@ fun WheelRectangleColorPickerHSV(
     WheelColorPicker(
         modifier = modifier.aspectRatio(1f),
         thicknessPercentage = wheelThicknessPercentage,
+        indicatorContent = { offset ->
+            wheelIndicatorContent?.invoke(this, offset) ?: rotate(hue) {
+                rotate(-90f) {
+                    drawLine(
+                        color = Color.White,
+                        start = size.center,
+                        end = size.center.plus(Offset(0f, size.height)),
+                        strokeWidth = 1f
+                    )
+                }
+            }
+        },
         hue = hue,
         onHueChange = updatedOnHueChange,
         content = { diameter ->
-            RectangleHSVColorPicker(modifier = Modifier.size((diameter / sqrt(2f)).dp.let { side ->
-                DpSize(side, side)
-            }).composed {
-                if (isRotating) rotate(-90f) else this
-            },
+            TriangleColorPickerSV(
+                modifier = Modifier.size(diameter.dp).composed {
+                    if (isRotating) rotate(-90f) else this
+                },
                 isRotating = isRotating,
                 indicatorContent = { offset ->
                     drawCircle(

@@ -1,4 +1,4 @@
-package picker.core
+package picker
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.gestures.detectDragGestures

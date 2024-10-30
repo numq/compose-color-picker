@@ -1,4 +1,4 @@
-package picker
+package picker.wheel.rectangle
 
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.*
@@ -13,10 +13,10 @@ import color.ColorCalculation
 import color.saturation
 import color.value
 import offset.OffsetPercentageCalculation
-import picker.core.ColorPickerComponent
+import picker.ColorPickerComponent
 
 @Composable
-fun RectangleHSVColorPicker(
+fun RectangleColorPickerSV(
     modifier: Modifier,
     isRotating: Boolean,
     indicatorContent: DrawScope.(indicatorOffset: Offset) -> Unit,
@@ -36,7 +36,7 @@ fun RectangleHSVColorPicker(
 
     val updatedOnValueChange by rememberUpdatedState(onValueChange)
 
-    val innerIndicatorOffsetPercentage by remember(saturation, value) {
+    val indicatorOffsetPercentage by remember(saturation, value) {
         derivedStateOf {
             OffsetPercentageCalculation.calculateHSVRectangleOffsetPercentage(saturation = saturation, value = value)
         }
@@ -62,9 +62,9 @@ fun RectangleHSVColorPicker(
 
     ColorPickerComponent(
         modifier = modifier.fillMaxSize().rotate(rotationDegrees).clipToBounds(),
-        indicatorOffsetPercentage = innerIndicatorOffsetPercentage,
-        onIndicatorOffsetPercentage = { indicatorOffsetPercentage ->
-            ColorCalculation.calculateHSVRectangleColor(hue, indicatorOffsetPercentage).run {
+        indicatorOffsetPercentage = indicatorOffsetPercentage,
+        onIndicatorOffsetPercentage = { offsetPercentage ->
+            ColorCalculation.calculateHSVRectangleColor(hue, offsetPercentage).run {
                 updatedOnSaturationChange(saturation())
                 updatedOnValueChange(value())
             }

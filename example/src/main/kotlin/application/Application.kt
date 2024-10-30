@@ -2,6 +2,7 @@ package application
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.material.Text
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -19,12 +20,19 @@ import color.saturation
 import color.value
 import controls.HSVControls
 import controls.RGBControls
-import picker.CircularColorPicker
-import picker.RectangularColorPicker
-import picker.WheelRectangleColorPickerHSV
-import picker.WheelTriangleColorPickerHSV
+import picker.circular.CircularColorPicker
+import picker.circular.CircularColorPickerLazy
+import picker.rectangular.RectangularColorPicker
+import picker.rectangular.RectangularColorPickerLazy
+import picker.wheel.rectangle.WheelRectangleColorPickerHSV
+import picker.wheel.rectangle.WheelRectangleColorPickerHSVLazy
+import picker.wheel.triangle.WheelTriangleColorPickerHSV
+import picker.wheel.triangle.WheelTriangleColorPickerHSVLazy
 
-fun main() = singleWindowApplication(title = "Color Picker", state = WindowState(size = DpSize(width = 512.dp, height = 512.dp))) {
+fun main() = singleWindowApplication(
+    title = "Color Picker",
+    state = WindowState(size = DpSize(width = 768.dp, height = 768.dp))
+) {
     val initialColor = Color.White
 
     val (hue, setHue) = remember {
@@ -54,49 +62,107 @@ fun main() = singleWindowApplication(title = "Color Picker", state = WindowState
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-        Row(
+        Column(
             modifier = Modifier.weight(1f),
-            horizontalArrangement = Arrangement.spacedBy(space = 8.dp),
-            verticalAlignment = Alignment.CenterVertically
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            CircularColorPicker(
+            Text("Interactive color pickers", modifier = Modifier.padding(4.dp), color = indicationColor)
+            Row(
                 modifier = Modifier.weight(1f),
-                color = backgroundColor,
-                onColorChange = { color ->
-                    setHue(color.hue())
-                    setSaturation(color.saturation())
-                    setValue(color.value())
-                }
-            )
-            RectangularColorPicker(
+                horizontalArrangement = Arrangement.spacedBy(space = 8.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                CircularColorPicker(
+                    modifier = Modifier.weight(1f),
+                    color = backgroundColor,
+                    onColorChange = { color ->
+                        setHue(color.hue())
+                        setSaturation(color.saturation())
+                        setValue(color.value())
+                    }
+                )
+                RectangularColorPicker(
+                    modifier = Modifier.weight(1f),
+                    color = backgroundColor,
+                    onColorChange = { color ->
+                        setHue(color.hue())
+                        setSaturation(color.saturation())
+                        setValue(color.value())
+                    }
+                )
+                WheelRectangleColorPickerHSV(
+                    modifier = Modifier.weight(1f),
+                    isRotating = true,
+                    hue = hue,
+                    onHueChange = setHue,
+                    saturation = saturation,
+                    onSaturationChange = setSaturation,
+                    value = value,
+                    onValueChange = setValue,
+                )
+                WheelTriangleColorPickerHSV(
+                    modifier = Modifier.weight(1f),
+                    isRotating = true,
+                    hue = hue,
+                    onHueChange = setHue,
+                    saturation = saturation,
+                    onSaturationChange = setSaturation,
+                    value = value,
+                    onValueChange = setValue,
+                )
+            }
+        }
+        Column(
+            modifier = Modifier.weight(1f),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            Text("Lazy color pickers", modifier = Modifier.padding(4.dp), color = indicationColor)
+            Row(
                 modifier = Modifier.weight(1f),
-                color = backgroundColor,
-                onColorChange = { color ->
-                    setHue(color.hue())
-                    setSaturation(color.saturation())
-                    setValue(color.value())
-                }
-            )
-            WheelRectangleColorPickerHSV(
-                modifier = Modifier.weight(1f),
-                isRotating = true,
-                hue = hue,
-                onHueChange = setHue,
-                saturation = saturation,
-                onSaturationChange = setSaturation,
-                value = value,
-                onValueChange = setValue,
-            )
-            WheelTriangleColorPickerHSV(
-                modifier = Modifier.weight(1f),
-                isRotating = true,
-                hue = hue,
-                onHueChange = setHue,
-                saturation = saturation,
-                onSaturationChange = setSaturation,
-                value = value,
-                onValueChange = setValue,
-            )
+                horizontalArrangement = Arrangement.spacedBy(space = 8.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                CircularColorPickerLazy(
+                    modifier = Modifier.weight(1f),
+                    initialColor = backgroundColor,
+                    onColorChange = { color ->
+                        setHue(color.hue())
+                        setSaturation(color.saturation())
+                        setValue(color.value())
+                    }
+                )
+                RectangularColorPickerLazy(
+                    modifier = Modifier.weight(1f),
+                    initialColor = backgroundColor,
+                    onColorChange = { color ->
+                        setHue(color.hue())
+                        setSaturation(color.saturation())
+                        setValue(color.value())
+                    }
+                )
+                WheelRectangleColorPickerHSVLazy(
+                    modifier = Modifier.weight(1f),
+                    isRotating = true,
+                    initialColor = backgroundColor,
+                    onColorChange = { color ->
+                        setHue(color.hue())
+                        setSaturation(color.saturation())
+                        setValue(color.value())
+                    }
+                )
+                WheelTriangleColorPickerHSVLazy(
+                    modifier = Modifier.weight(1f),
+                    isRotating = true,
+                    initialColor = backgroundColor,
+                    onColorChange = { color ->
+                        setHue(color.hue())
+                        setSaturation(color.saturation())
+                        setValue(color.value())
+                    }
+                )
+            }
         }
         RGBControls(
             modifier = Modifier.fillMaxWidth(),

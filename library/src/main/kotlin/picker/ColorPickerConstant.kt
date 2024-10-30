@@ -1,4 +1,4 @@
-package picker.core
+package picker
 
 object ColorPickerConstant {
     const val DEFAULT_THICKNESS_PERCENTAGE = .1f

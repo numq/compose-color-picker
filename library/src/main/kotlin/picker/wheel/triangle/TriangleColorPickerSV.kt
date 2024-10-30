@@ -1,4 +1,4 @@
-package picker
+package picker.wheel.triangle
 
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.fillMaxSize
@@ -18,14 +18,14 @@ import color.saturation
 import color.value
 import offset.OffsetMapper
 import offset.OffsetPercentageCalculation
-import picker.core.ColorPickerComponent
+import picker.ColorPickerComponent
 import shape.TriangleShape
 import kotlin.math.cos
 import kotlin.math.min
 import kotlin.math.sin
 
 @Composable
-fun TriangleHSVColorPicker(
+fun TriangleColorPickerSV(
     modifier: Modifier,
     isRotating: Boolean,
     indicatorContent: DrawScope.(indicatorOffset: Offset) -> Unit,
@@ -56,7 +56,7 @@ fun TriangleHSVColorPicker(
             Size(maxWidth.value, maxHeight.value)
         }
 
-        val innerIndicatorOffsetPercentage by remember(saturation, value) {
+        val indicatorOffsetPercentage by remember(saturation, value) {
             derivedStateOf {
                 OffsetPercentageCalculation.calculateHSVTriangleOffsetPercentage(
                     saturation = saturation,
@@ -66,8 +66,8 @@ fun TriangleHSVColorPicker(
             }
         }
 
-        LaunchedEffect(innerIndicatorOffsetPercentage, colorPickerSize) {
-            ColorCalculation.calculateHSVTriangleColor(hue, innerIndicatorOffsetPercentage, colorPickerSize).run {
+        LaunchedEffect(hue, indicatorOffsetPercentage, colorPickerSize) {
+            ColorCalculation.calculateHSVTriangleColor(hue, indicatorOffsetPercentage, colorPickerSize).run {
                 updatedOnSaturationChange(saturation())
                 updatedOnValueChange(value())
             }
@@ -120,9 +120,9 @@ fun TriangleHSVColorPicker(
             mapIndicatorOffset = { offset ->
                 OffsetMapper.mapTriangularOffset(offset = offset, vertices = vertices)
             },
-            indicatorOffsetPercentage = innerIndicatorOffsetPercentage,
-            onIndicatorOffsetPercentage = { indicatorOffsetPercentage ->
-                ColorCalculation.calculateHSVTriangleColor(hue, indicatorOffsetPercentage, colorPickerSize).run {
+            indicatorOffsetPercentage = indicatorOffsetPercentage,
+            onIndicatorOffsetPercentage = { offsetPercentage ->
+                ColorCalculation.calculateHSVTriangleColor(hue, offsetPercentage, colorPickerSize).run {
                     updatedOnSaturationChange(saturation())
                     updatedOnValueChange(value())
                 }
