@@ -15,19 +15,19 @@ import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.WindowState
 import androidx.compose.ui.window.singleWindowApplication
-import color.hue
-import color.saturation
-import color.value
+import com.github.numq.color.hue
+import com.github.numq.color.saturation
+import com.github.numq.color.value
+import com.github.numq.picker.circular.CircularColorPicker
+import com.github.numq.picker.circular.CircularColorPickerLazy
+import com.github.numq.picker.rectangular.RectangularColorPicker
+import com.github.numq.picker.rectangular.RectangularColorPickerLazy
+import com.github.numq.picker.wheel.rectangle.WheelRectangleColorPickerHSV
+import com.github.numq.picker.wheel.rectangle.WheelRectangleColorPickerHSVLazy
+import com.github.numq.picker.wheel.triangle.WheelTriangleColorPickerHSV
+import com.github.numq.picker.wheel.triangle.WheelTriangleColorPickerHSVLazy
 import controls.HSVControls
 import controls.RGBControls
-import picker.circular.CircularColorPicker
-import picker.circular.CircularColorPickerLazy
-import picker.rectangular.RectangularColorPicker
-import picker.rectangular.RectangularColorPickerLazy
-import picker.wheel.rectangle.WheelRectangleColorPickerHSV
-import picker.wheel.rectangle.WheelRectangleColorPickerHSVLazy
-import picker.wheel.triangle.WheelTriangleColorPickerHSV
-import picker.wheel.triangle.WheelTriangleColorPickerHSVLazy
 
 fun main() = singleWindowApplication(
     title = "Color Picker",
