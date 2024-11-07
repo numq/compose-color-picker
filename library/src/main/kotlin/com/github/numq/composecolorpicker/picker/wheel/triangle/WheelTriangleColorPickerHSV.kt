@@ -25,6 +25,7 @@ fun WheelTriangleColorPickerHSV(
     indicatorRadius: Float = ColorPickerConstant.DEFAULT_INDICATOR_RADIUS,
     wheelThicknessPercentage: Float = ColorPickerConstant.DEFAULT_THICKNESS_PERCENTAGE,
     wheelIndicatorContent: (DrawScope.(indicatorOffset: Offset) -> Unit)? = null,
+    onEndOfChange: () -> Unit = {},
     isRotating: Boolean,
     hue: Float,
     onHueChange: (Float) -> Unit,
@@ -45,6 +46,8 @@ fun WheelTriangleColorPickerHSV(
 
     val updatedOnValueChange by rememberUpdatedState(onValueChange)
 
+    val updatedOnEndOfChange by rememberUpdatedState(onEndOfChange)
+
     WheelColorPicker(
         modifier = modifier.aspectRatio(1f),
         thicknessPercentage = wheelThicknessPercentage,
@@ -60,6 +63,7 @@ fun WheelTriangleColorPickerHSV(
                 }
             }
         },
+        onEndOfChange = updatedOnEndOfChange,
         hue = hue,
         onHueChange = updatedOnHueChange,
         content = { diameter ->
@@ -80,7 +84,8 @@ fun WheelTriangleColorPickerHSV(
                 saturation = saturation,
                 onSaturationChange = updatedOnSaturationChange,
                 value = value,
-                onValueChange = updatedOnValueChange
+                onValueChange = updatedOnValueChange,
+                onEndOfChange = updatedOnEndOfChange,
             )
         }
     )

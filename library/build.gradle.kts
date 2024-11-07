@@ -6,7 +6,7 @@ plugins {
 }
 
 group = "com.github.numq"
-version = "1.0.3"
+version = "1.0.4"
 
 repositories {
     google()

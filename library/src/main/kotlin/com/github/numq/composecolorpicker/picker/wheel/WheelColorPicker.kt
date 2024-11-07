@@ -31,11 +31,14 @@ fun WheelColorPicker(
     indicatorContent: (DrawScope.(indicatorOffset: Offset) -> Unit),
     hue: Float,
     onHueChange: (Float) -> Unit,
+    onEndOfChange: () -> Unit,
     content: @Composable BoxWithConstraintsScope.(diameter: Float) -> Unit,
 ) {
     require(hue in 0f..360f) { "Hue should be within 0f..360f" }
 
     val updatedOnHueChange by rememberUpdatedState(onHueChange)
+
+    val updatedOnEndOfChange by rememberUpdatedState(onEndOfChange)
 
     val indicatorOffsetPercentage by remember(hue) {
         derivedStateOf {
@@ -113,7 +116,7 @@ fun WheelColorPicker(
                 )
             },
             indicatorOffsetPercentage = indicatorOffsetPercentage,
-            onIndicatorOffsetPercentage = { (offsetX, offsetY) ->
+            onIndicatorOffsetPercentageChange = { (offsetX, offsetY) ->
                 Offset(0.5f, 0.5f).run {
                     val angleInRadians = atan2(offsetY - y, offsetX - x)
                     var angleInDegrees = Math.toDegrees(angleInRadians.toDouble()).toFloat()
@@ -125,6 +128,7 @@ fun WheelColorPicker(
                     updatedOnHueChange(angleInDegrees)
                 }
             },
+            onEndOfIndicatorOffsetPercentageChange = updatedOnEndOfChange,
             indicatorContent = indicatorContent,
             content = {
                 drawPath(path = path, brush = gradient)

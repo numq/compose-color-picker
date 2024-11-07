@@ -25,6 +25,7 @@ fun RectangleColorPickerSV(
     onSaturationChange: (Float) -> Unit,
     value: Float,
     onValueChange: (Float) -> Unit,
+    onEndOfChange: () -> Unit,
 ) {
     require(hue in 0f..360f) { "Hue should be within 0f..360f" }
 
@@ -35,6 +36,8 @@ fun RectangleColorPickerSV(
     val updatedOnSaturationChange by rememberUpdatedState(onSaturationChange)
 
     val updatedOnValueChange by rememberUpdatedState(onValueChange)
+
+    val updatedOnEndOfChange by rememberUpdatedState(onEndOfChange)
 
     val indicatorOffsetPercentage by remember(saturation, value) {
         derivedStateOf {
@@ -63,12 +66,13 @@ fun RectangleColorPickerSV(
     ColorPickerComponent(
         modifier = modifier.fillMaxSize().rotate(rotationDegrees).clipToBounds(),
         indicatorOffsetPercentage = indicatorOffsetPercentage,
-        onIndicatorOffsetPercentage = { offsetPercentage ->
+        onIndicatorOffsetPercentageChange = { offsetPercentage ->
             ColorCalculation.calculateHSVRectangleColor(hue, offsetPercentage).run {
                 updatedOnSaturationChange(saturation())
                 updatedOnValueChange(value())
             }
         },
+        onEndOfIndicatorOffsetPercentageChange = updatedOnEndOfChange,
         indicatorContent = indicatorContent,
         content = {
             drawRect(brush = backgroundGradient)

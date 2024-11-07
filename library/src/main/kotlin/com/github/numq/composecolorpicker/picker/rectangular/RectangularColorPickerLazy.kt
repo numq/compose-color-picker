@@ -23,11 +23,14 @@ fun RectangularColorPickerLazy(
     indicatorThickness: Float = ColorPickerConstant.DEFAULT_INDICATOR_THICKNESS,
     indicatorRadius: Float = ColorPickerConstant.DEFAULT_INDICATOR_RADIUS,
     initialColor: Color,
+    onEndOfColorChange: () -> Unit = {},
     onColorChange: (Color) -> Unit,
 ) {
     require(initialColor.isSpecified) { "Initial color should be specified" }
 
     val updatedOnColorChange by rememberUpdatedState(onColorChange)
+
+    val updatedOnEndOfColorChange by rememberUpdatedState(onEndOfColorChange)
 
     val backgroundGradient = remember {
         Brush.horizontalGradient(
@@ -67,7 +70,8 @@ fun RectangularColorPickerLazy(
         ColorPickerComponent(
             modifier = Modifier.fillMaxSize().clipToBounds(),
             indicatorOffsetPercentage = indicatorOffsetPercentage,
-            onIndicatorOffsetPercentage = setIndicatorOffsetPercentage,
+            onIndicatorOffsetPercentageChange = setIndicatorOffsetPercentage,
+            onEndOfIndicatorOffsetPercentageChange = updatedOnEndOfColorChange,
             indicatorContent = { offset ->
                 drawCircle(
                     color = if (color.luminance() > .5f) Color.Black else Color.White,

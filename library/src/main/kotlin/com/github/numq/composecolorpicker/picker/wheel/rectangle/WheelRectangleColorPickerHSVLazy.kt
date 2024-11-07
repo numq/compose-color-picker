@@ -29,6 +29,7 @@ fun WheelRectangleColorPickerHSVLazy(
     indicatorRadius: Float = ColorPickerConstant.DEFAULT_INDICATOR_RADIUS,
     wheelThicknessPercentage: Float = ColorPickerConstant.DEFAULT_THICKNESS_PERCENTAGE,
     wheelIndicatorContent: (DrawScope.(indicatorOffset: Offset) -> Unit)? = null,
+    onEndOfChange: () -> Unit = {},
     isRotating: Boolean,
     initialColor: Color,
     onColorChange: (Color) -> Unit,
@@ -36,6 +37,8 @@ fun WheelRectangleColorPickerHSVLazy(
     require(initialColor.isSpecified) { "Initial color should be specified" }
 
     val updatedOnColorChange by rememberUpdatedState(onColorChange)
+
+    val updatedOnEndOfChange by rememberUpdatedState(onEndOfChange)
 
     val (hue, setHue) = remember { mutableStateOf(initialColor.hue()) }
 
@@ -70,12 +73,14 @@ fun WheelRectangleColorPickerHSVLazy(
         },
         hue = hue,
         onHueChange = setHue,
+        onEndOfChange = updatedOnEndOfChange,
         content = { diameter ->
-            RectangleColorPickerSVLazy(modifier = Modifier.size((diameter / sqrt(2f)).dp.let { side ->
-                DpSize(side, side)
-            }).composed {
-                if (isRotating) rotate(-90f) else this
-            },
+            RectangleColorPickerSVLazy(
+                modifier = Modifier.size((diameter / sqrt(2f)).dp.let { side ->
+                    DpSize(side, side)
+                }).composed {
+                    if (isRotating) rotate(-90f) else this
+                },
                 isRotating = isRotating,
                 indicatorContent = { offset ->
                     drawCircle(
@@ -90,7 +95,8 @@ fun WheelRectangleColorPickerHSVLazy(
                 onColorChange = { changedColor ->
                     setSaturation(changedColor.saturation())
                     setValue(changedColor.value())
-                }
+                },
+                onEndOfChange = updatedOnEndOfChange,
             )
         }
     )

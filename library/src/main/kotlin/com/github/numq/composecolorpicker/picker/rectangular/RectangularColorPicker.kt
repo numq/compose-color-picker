@@ -23,11 +23,14 @@ fun RectangularColorPicker(
     indicatorThickness: Float = ColorPickerConstant.DEFAULT_INDICATOR_THICKNESS,
     indicatorRadius: Float = ColorPickerConstant.DEFAULT_INDICATOR_RADIUS,
     color: Color,
+    onEndOfColorChange: () -> Unit = {},
     onColorChange: (Color) -> Unit,
 ) {
     require(color.isSpecified) { "Color should be specified" }
 
     val updatedOnColorChange by rememberUpdatedState(onColorChange)
+
+    val updatedOnEndOfColorChange by rememberUpdatedState(onEndOfColorChange)
 
     val backgroundGradient = remember {
         Brush.horizontalGradient(
@@ -57,9 +60,10 @@ fun RectangularColorPicker(
         ColorPickerComponent(
             modifier = Modifier.fillMaxSize().clipToBounds(),
             indicatorOffsetPercentage = indicatorOffsetPercentage,
-            onIndicatorOffsetPercentage = { offsetPercentage ->
+            onIndicatorOffsetPercentageChange = { offsetPercentage ->
                 updatedOnColorChange(ColorCalculation.calculateFullRectangleColor(offsetPercentage = offsetPercentage))
             },
+            onEndOfIndicatorOffsetPercentageChange = updatedOnEndOfColorChange,
             indicatorContent = { offset ->
                 drawCircle(
                     color = if (color.luminance() > .5f) Color.Black else Color.White,

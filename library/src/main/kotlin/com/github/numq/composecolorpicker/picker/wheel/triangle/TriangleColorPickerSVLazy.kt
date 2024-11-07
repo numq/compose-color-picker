@@ -33,12 +33,15 @@ fun TriangleColorPickerSVLazy(
     hue: Float,
     initialColor: Color,
     onColorChange: (Color) -> Unit,
+    onEndOfChange: () -> Unit,
 ) {
     require(hue in 0f..360f) { "Hue should be within 0f..360f" }
 
     require(initialColor.isSpecified) { "Initial color should be specified" }
 
     val updatedOnColorChange by rememberUpdatedState(onColorChange)
+
+    val updatedOnEndOfChange by rememberUpdatedState(onEndOfChange)
 
     val rotationDegrees by remember(isRotating, hue) {
         derivedStateOf {
@@ -117,7 +120,8 @@ fun TriangleColorPickerSVLazy(
                 OffsetMapper.mapTriangularOffset(offset = offset, vertices = vertices)
             },
             indicatorOffsetPercentage = indicatorOffsetPercentage,
-            onIndicatorOffsetPercentage = setIndicatorOffsetPercentage,
+            onIndicatorOffsetPercentageChange = setIndicatorOffsetPercentage,
+            onEndOfIndicatorOffsetPercentageChange = updatedOnEndOfChange,
             indicatorContent = indicatorContent,
             content = {
                 drawPath(path = trianglePath, brush = backgroundGradient)

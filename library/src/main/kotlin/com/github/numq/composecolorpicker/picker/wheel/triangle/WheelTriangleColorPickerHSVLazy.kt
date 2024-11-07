@@ -27,6 +27,7 @@ fun WheelTriangleColorPickerHSVLazy(
     indicatorRadius: Float = ColorPickerConstant.DEFAULT_INDICATOR_RADIUS,
     wheelThicknessPercentage: Float = ColorPickerConstant.DEFAULT_THICKNESS_PERCENTAGE,
     wheelIndicatorContent: (DrawScope.(indicatorOffset: Offset) -> Unit)? = null,
+    onEndOfChange: () -> Unit = {},
     isRotating: Boolean,
     initialColor: Color,
     onColorChange: (Color) -> Unit,
@@ -34,6 +35,8 @@ fun WheelTriangleColorPickerHSVLazy(
     require(initialColor.isSpecified) { "Initial color should be specified" }
 
     val updatedOnColorChange by rememberUpdatedState(onColorChange)
+
+    val updatedOnEndOfChange by rememberUpdatedState(onEndOfChange)
 
     val (hue, setHue) = remember { mutableStateOf(initialColor.hue()) }
 
@@ -66,6 +69,7 @@ fun WheelTriangleColorPickerHSVLazy(
                 }
             }
         },
+        onEndOfChange = updatedOnEndOfChange,
         hue = hue,
         onHueChange = setHue,
         content = { diameter ->
@@ -87,7 +91,8 @@ fun WheelTriangleColorPickerHSVLazy(
                 onColorChange = { changedColor ->
                     setSaturation(changedColor.saturation())
                     setValue(changedColor.value())
-                }
+                },
+                onEndOfChange = updatedOnEndOfChange
             )
         }
     )

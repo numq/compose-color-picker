@@ -34,6 +34,7 @@ fun TriangleColorPickerSV(
     onSaturationChange: (Float) -> Unit,
     value: Float,
     onValueChange: (Float) -> Unit,
+    onEndOfChange: () -> Unit,
 ) {
     require(hue in 0f..360f) { "Hue should be within 0f..360f" }
 
@@ -44,6 +45,8 @@ fun TriangleColorPickerSV(
     val updatedOnSaturationChange by rememberUpdatedState(onSaturationChange)
 
     val updatedOnValueChange by rememberUpdatedState(onValueChange)
+
+    val updatedOnEndOfChange by rememberUpdatedState(onEndOfChange)
 
     val rotationDegrees by remember(isRotating, hue) {
         derivedStateOf {
@@ -121,12 +124,13 @@ fun TriangleColorPickerSV(
                 OffsetMapper.mapTriangularOffset(offset = offset, vertices = vertices)
             },
             indicatorOffsetPercentage = indicatorOffsetPercentage,
-            onIndicatorOffsetPercentage = { offsetPercentage ->
+            onIndicatorOffsetPercentageChange = { offsetPercentage ->
                 ColorCalculation.calculateHSVTriangleColor(hue, offsetPercentage, colorPickerSize).run {
                     updatedOnSaturationChange(saturation())
                     updatedOnValueChange(value())
                 }
             },
+            onEndOfIndicatorOffsetPercentageChange = updatedOnEndOfChange,
             indicatorContent = indicatorContent,
             content = {
                 drawPath(path = trianglePath, brush = backgroundGradient)

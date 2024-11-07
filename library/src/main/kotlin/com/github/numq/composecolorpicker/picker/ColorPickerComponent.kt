@@ -19,13 +19,16 @@ fun ColorPickerComponent(
     modifier: Modifier,
     mapIndicatorOffset: (PointerInputScope.(Offset) -> Offset?)? = null,
     indicatorOffsetPercentage: OffsetPercentage,
-    onIndicatorOffsetPercentage: (indicatorOffsetPercentage: OffsetPercentage) -> Unit,
+    onIndicatorOffsetPercentageChange: (indicatorOffsetPercentage: OffsetPercentage) -> Unit,
+    onEndOfIndicatorOffsetPercentageChange: () -> Unit,
     indicatorContent: DrawScope.(indicatorOffset: Offset) -> Unit,
     content: DrawScope.() -> Unit,
 ) {
     val updatedMapIndicatorOffset by rememberUpdatedState(mapIndicatorOffset)
 
-    val updatedOnIndicatorOffsetPercentage by rememberUpdatedState(onIndicatorOffsetPercentage)
+    val updatedOnChange by rememberUpdatedState(onIndicatorOffsetPercentageChange)
+
+    val updatedOnEndOfChange by rememberUpdatedState(onEndOfIndicatorOffsetPercentageChange)
 
     BoxWithConstraints(modifier = modifier) {
         val colorPickerSize = remember(maxWidth, maxHeight) {
@@ -43,7 +46,7 @@ fun ColorPickerComponent(
 
         Canvas(modifier = Modifier.fillMaxSize().pointerInput(updatedMapIndicatorOffset) {
             detectTapGestures(onTap = { offset ->
-                updatedOnIndicatorOffsetPercentage(
+                updatedOnChange(
                     (updatedMapIndicatorOffset?.invoke(this, offset) ?: offset).let { (x, y) ->
                         OffsetPercentage(
                             x = (x / size.width).coerceIn(0f, 1f),
@@ -53,10 +56,10 @@ fun ColorPickerComponent(
                 )
             })
         }.pointerInput(updatedMapIndicatorOffset) {
-            detectDragGestures { change, _ ->
+            detectDragGestures(onDragEnd = updatedOnEndOfChange) { change, _ ->
                 change.consume()
                 change.position.let { offset ->
-                    updatedOnIndicatorOffsetPercentage(
+                    updatedOnChange(
                         (updatedMapIndicatorOffset?.invoke(this, offset) ?: offset).let { (x, y) ->
                             OffsetPercentage(
                                 x = (x / size.width).coerceIn(0f, 1f),
